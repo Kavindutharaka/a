@@ -35,6 +35,6 @@ jobs:
       # Step 4: Push changes to Repo B
       - name: Push changes to Repo B
         run: |
-          git push origin master
+          git push origin main
         env:
           PERSONAL_ACCESS_TOKEN: ${{ secrets.PAT_REPO_B }}  # Use the PAT stored in secrets
