@@ -1,0 +1,39 @@
+name: Sync to Repo B's sub folder
+
+# Trigger this action on every push to Repo A
+on:
+  push:
+    branches:
+      - main  # Trigger on push to the main branch (you can adjust this branch as needed)
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout Repo A
+      - name: Checkout Repo A
+        uses: actions/checkout@v3
+
+      # Step 2: Clone Repo B into the workflow
+      - name: Clone Repo B
+        run: |
+          git clone https://<PERSONAL_ACCESS_TOKEN>@github.com/Kavindutharaka/b.git
+          cd b
+          git checkout master  # Checkout the branch where you want to sync changes
+
+      # Step 3: Copy Repo A contents into the ./sub/ folder of Repo B
+      - name: Move Repo A files to ./sub/ in Repo B
+        run: |
+          mkdir -p b/sub  # Create the sub folder if it doesn't exist
+          cp -R * b/sub/  # Copy all contents of Repo A to the ./sub/ folder in Repo B
+          cd b
+          git add .
+          git commit -m "Sync from Repo A to ./sub/ folder in Repo B" || echo "No changes to commit"
+
+      # Step 4: Push changes to Repo B
+      - name: Push changes to Repo B
+        run: |
+          git push origin master
+        env:
+          PERSONAL_ACCESS_TOKEN: ${{ secrets.PAT_REPO_B }}  # Use the PAT stored in secrets
