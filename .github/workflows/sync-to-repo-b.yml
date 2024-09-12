@@ -27,8 +27,9 @@ jobs:
       # Step 3: Copy Repo A files to ./sub/ in Repo B
       - name: Move Repo A files to ./sub/ in Repo B
         run: |
+          cd ../  # Go to the parent directory to avoid copying issues
           mkdir -p ./b/sub  # Create the sub folder if it doesn't exist
-          cp -R * ./b/sub/  # Copy all contents from Repo A to ./sub/ in Repo B
+          rsync -av --exclude='./b' ./a/ ./b/sub/  # Sync Repo A contents, excluding the b/ directory
           cd b
           git add .
           git commit -m "Sync from Repo A to ./sub/ folder in Repo B" || echo "No changes to commit"
