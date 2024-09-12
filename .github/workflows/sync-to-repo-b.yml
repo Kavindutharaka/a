@@ -18,7 +18,7 @@ jobs:
       # Step 2: Clone Repo B into the workflow
       - name: Clone Repo B
         run: |
-          git clone https://<PERSONAL_ACCESS_TOKEN>@github.com/Kavindutharaka/b.git
+          git clone https://${{ secrets.PAT_REPO_B }}@github.com/Kavindutharaka/b.git
           cd b
           git checkout master  # Checkout the branch where you want to sync changes
 
