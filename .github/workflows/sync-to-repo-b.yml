@@ -22,14 +22,15 @@ jobs:
           cd b
           git checkout master  # Checkout the branch where you want to sync changes
 
-      # Step 3: Copy Repo A contents into the ./sub/ folder of Repo B
+            # Step 3: Copy Repo A files to ./sub/ in Repo B
       - name: Move Repo A files to ./sub/ in Repo B
         run: |
           mkdir -p ./b/sub  # Create the sub folder if it doesn't exist
-          cp -R !(b) b/sub/  # Exclude the b/ directory from being copied to itself
+          rsync -av --exclude=b/ ./ ./b/sub/  # Sync Repo A contents, excluding the b/ directory
           cd b
           git add .
           git commit -m "Sync from Repo A to ./sub/ folder in Repo B" || echo "No changes to commit"
+
 
       # Step 4: Push changes to Repo B
       - name: Push changes to Repo B
