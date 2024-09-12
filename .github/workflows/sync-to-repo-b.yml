@@ -25,7 +25,7 @@ jobs:
       # Step 3: Copy Repo A contents into the ./sub/ folder of Repo B
       - name: Move Repo A files to ./sub/ in Repo B
         run: |
-          mkdir -p b/sub  # Create the sub folder if it doesn't exist
+          mkdir -p ./b/sub  # Create the sub folder if it doesn't exist
           cp -R !(b) b/sub/  # Exclude the b/ directory from being copied to itself
           cd b
           git add .
