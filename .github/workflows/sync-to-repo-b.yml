@@ -1,42 +1,18 @@
-name: Sync to Repo B's sub folder
+name: Trigger Repo B Workflow
 
-# Trigger this action on every push to Repo A
 on:
   push:
     branches:
-      - main  # Trigger on push to the main branch of Repo A
+      - main
 
 jobs:
-  sync:
+  trigger-b-repo:
     runs-on: ubuntu-latest
-
     steps:
-      # Step 1: Checkout Repo A
-      - name: Checkout Repo A
-        uses: actions/checkout@v3
-        with:
-          ref: main  # Checkout the main branch of Repo A
-
-      # Step 2: Clone Repo B into the workflow
-      - name: Clone Repo B
+      - name: Trigger Repo B Dispatch
         run: |
-          git clone https://${{ secrets.PAT_REPO_B }}@github.com/Kavindutharaka/b.git
-          cd b
-          git checkout master  # Checkout the master branch of Repo B
-
-      # Step 3: Copy Repo A files to ./sub/ in Repo B
-      - name: Move Repo A files to ./sub/ in Repo B
-        run: |
-          cd ../  # Go to the parent directory to avoid copying issues
-          mkdir -p ./b/sub  # Create the sub folder if it doesn't exist
-          rsync -av --exclude='./b' ./a/ ./b/sub/  # Sync Repo A contents, excluding the b/ directory
-          cd b
-          git add .
-          git commit -m "Sync from Repo A to ./sub/ folder in Repo B" || echo "No changes to commit"
-
-      # Step 4: Push changes to Repo B
-      - name: Push changes to Repo B
-        run: |
-          git push origin master  # Push to the master branch of Repo B
-        env:
-          PERSONAL_ACCESS_TOKEN: ${{ secrets.PAT_REPO_B }}  # Use the PAT stored in secrets
+          curl -X POST \
+          -H "Accept: application/vnd.github+json" \
+          -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+          https://api.github.com/repos/<owner>/<repo-b>/dispatches \
+          -d '{"event_type":"trigger-from-repo-a"}'
